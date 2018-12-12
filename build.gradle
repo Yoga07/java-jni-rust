@@ -30,8 +30,27 @@ repositories {
 }
 test {
   systemProperty "java.library.path", "${rootDir}/target/debug"
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        exceptionFormat "full"
+        outputs.upToDateWhen {false}
+        showStandardStreams = true
+    }
 }
 task buildRust(type: Exec) {
   commandLine 'cargo', 'build'
+}
+task javah(type:Exec) {
+  def classpath = "build/classes/java/main"
+  def className;
+  if(project.hasProperty('fullClassName')) {
+    className = project.getProperty('fullClassName')
+  } else if(project.hasProperty('className')) {
+    className = "com.sample.jni." + project.getProperty('className')
+  } else {
+    className = "com.sample.jni.Library"
+  }
+  commandLine 'javah', '-classpath', classpath, className
+  dependsOn classes
 }
 processTestResources.dependsOn(buildRust)

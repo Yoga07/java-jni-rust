@@ -1,7 +1,10 @@
 target
 build
+out
+*.h
 **/*.rs.bk
 Cargo.lock
 .idea
+.settings
 .gradle
 *.iml
