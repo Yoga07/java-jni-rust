@@ -1,0 +1,10 @@
+[package]
+name = "objectest"
+version = "0.1.0"
+authors = ["yoga07"]
+
+[dependencies]
+jni = "0.10.2"
+
+[lib]
+crate-type = ["cdylib"]
