@@ -1,0 +1,11 @@
+[package]
+name = "callbacks"
+version = "0.1.0"
+authors = ["Yoga07 <yogeshwar_1997@hotmail.com>"]
+edition = "2018"
+
+[dependencies]
+jni = "0.10.2"
+
+[lib]
+crate_type = ["cdylib"]

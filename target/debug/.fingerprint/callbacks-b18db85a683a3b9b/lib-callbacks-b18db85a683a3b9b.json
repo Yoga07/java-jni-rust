@@ -1,0 +1,1 @@
+{"rustc":5113389540416417165,"features":"[]","target":834717197354736827,"profile":3018787646798704132,"path":10872709659218687626,"deps":[["jni v0.10.2","jni",3428135702952231185]],"local":[{"MtimeBased":[[1545136208,358992872],".fingerprint/callbacks-b18db85a683a3b9b/dep-lib-callbacks-b18db85a683a3b9b"]}],"rustflags":[],"edition":"Edition2018"}
