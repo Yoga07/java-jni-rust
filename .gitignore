@@ -1,3 +1,4 @@
-/trash
+/build
+/target
 **/*.rs.bk
 Cargo.lock
