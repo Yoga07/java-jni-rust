@@ -10,7 +10,7 @@ pub extern "system" fn Java_com_sample_jni_Library_printMsg(
     _env: JNIEnv,
     _class: JClass
     ) {
-    println!("Hello World!");
+    println!("[Rust]Hello World!");
 }
 
 #[no_mangle]
@@ -27,7 +27,7 @@ pub extern "system" fn Java_com_sample_jni_Library_returnString(
     _env: JNIEnv,
     _class: JClass
     ) -> jstring {
-    let s = _env.new_string("hello").expect("error");
+    let s = _env.new_string("[Rust to Java]hello").expect("error");
     s.into_inner()
 }
 
@@ -71,12 +71,12 @@ pub extern "system" fn Java_com_sample_jni_UserData_printUserData(
     obj2: JObject
     ) {
         let handle = thread::spawn(|| {
-        println!("Rust is processing");
+        println!("[Rust]Rust is processing");
         let sleeptime = time::Duration::from_secs(3);
         thread::sleep(sleeptime);
-        println!("Rust finishes processing");
+        println!("[Rust]Rust finishes processing");
         });
-        let z = _env.new_string("Calls back to Java\nJava executes callbacks").expect("error creating java string");
+        let z = _env.new_string("Rust->Calls back to Java\n[Java]Java executes callbacks").expect("error creating java string");
         let q = JValue::Object(JObject::from(z));
         _env.call_method(
             obj2,

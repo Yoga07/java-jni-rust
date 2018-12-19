@@ -3,7 +3,7 @@ package com.sample.jni;
 public class Main{
 
   static{
-    System.loadLibrary("callbacks");
+    System.loadLibrary("rust_jni");
   }
 
   public void printInRust(){

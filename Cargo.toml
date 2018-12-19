@@ -1,5 +1,5 @@
 [package]
-name = "callbacks"
+name = "rust-jni"
 version = "0.1.0"
 authors = ["Yoga07 <yogeshwar_1997@hotmail.com>"]
 edition = "2018"
