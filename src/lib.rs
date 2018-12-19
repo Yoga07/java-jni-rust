@@ -27,7 +27,7 @@ pub extern "system" fn Java_com_sample_jni_Library_returnString(
     _env: JNIEnv,
     _class: JClass
     ) -> jstring {
-    let s = _env.new_string("[Rust to Java]hello").expect("error");
+    let s = _env.new_string("[Java]hello").expect("error");
     s.into_inner()
 }
 

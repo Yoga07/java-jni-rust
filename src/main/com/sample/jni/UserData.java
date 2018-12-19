@@ -6,7 +6,7 @@ public class UserData {
     public double balance;
 
     public String getUserInfo() {
-        return "[Rust allocates objects to Java]->[name]=" + name + ", [balance]=" + balance;
+        return "[Java]->Name=" + name + ", Balance=" + balance;
     }
 
     public static native UserData createUser(String name, double balance);
