@@ -1,13 +1,9 @@
 extern crate jni;
 
 use jni::objects::{JClass, JObject, JString, JValue};
-use jni::sys::{_jobject, jdouble, jint, jobject, jstring};
+use jni::sys::{jdouble, jint, jobject, jstring};
 use jni::JNIEnv;
-use jni::JavaVM;
-use std::marker::Send;
-use std::sync::mpsc::channel;
 use std::{thread, time};
-
 
 #[no_mangle]
 pub extern "system" fn Java_com_sample_jni_Library_printMsg(_env: JNIEnv, _class: JClass) {
@@ -59,40 +55,42 @@ pub extern "system" fn Java_com_sample_jni_UserData_createUser(
 }
 
 #[no_mangle]
-
+#[allow(non_snake_case)]
+#[allow(unused_variables)]
 pub extern "system" fn Java_com_sample_jni_UserData_printUserData(
     env: JNIEnv,
     _class: JClass,
-    _obj1: JObject,
-    obj2: JObject,
+    object_for_rust: JObject,
+    object_for_callback: JObject,
 ) {
     let JVM = env.get_java_vm().unwrap();
 
-    let mut packet: Option<JObject> = Some(obj2);
+    let RustObj = env.new_global_ref(object_for_rust).unwrap();
+
+    let CallbackObj = env.new_global_ref(object_for_callback).unwrap();
 
     //THREAD 1 does Rust functions
     let handle = thread::spawn(move || {
-        let env1 = JVM.attach_current_thread().unwrap();
+        let rustobj = RustObj.as_obj();
         println!("[Rust]Rust is processing");
         let sleep_time = time::Duration::from_secs(10);
         thread::sleep(sleep_time);
         println!("[Rust]Rust finishes processing");
     });
+
     //THREAD 2 calls back to Java
-    let handle2 = thread::spawn(move || {
+    let handle1 = thread::spawn(move || {
         let env2 = JVM.attach_current_thread().unwrap();
-
-        let y: &mut Option<JObject> = &mut packet;
-
-        let mut object = y.take().unwrap();
-
+        let callbackobj = CallbackObj.as_obj();
         let z = env2
             .new_string("Rust->Calls back to Java\n[Java]Java executes callbacks")
             .expect("error creating java string");
 
         let q = JValue::Object(JObject::from(z));
 
-        env2.call_method(object, "call", "(Ljava/lang/String;)V", &[q])
+        env2.call_method(callbackobj, "call", "(Ljava/lang/String;)V", &[q])
             .expect("error in calling method from java");
     });
+
+    handle.join().unwrap();
 }
