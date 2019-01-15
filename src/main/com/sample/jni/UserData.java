@@ -11,6 +11,6 @@ public class UserData {
 
     public static native UserData createUser(String name, double balance);
 
-    public static native void printUserData(UserData user, CallbackAction action);
+    public static native void printUserData(UserData user, int sleep, CallbackAction action);
 
 }

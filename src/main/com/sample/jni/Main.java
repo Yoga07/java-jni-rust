@@ -11,7 +11,7 @@ public class Main{
   }
   public void returnInteger(){
     int i = Library.returnInt();
-    System.out.println(i);
+    System.out.println("[Java] "+i);
   }
 
   public void returnString(){
@@ -26,12 +26,14 @@ public class Main{
 
   public void checkCallback(){
     UserData userData1 = UserData.createUser("Yogesh", 1345553.0);
-    UserData.printUserData(userData1, (x) -> {
-          System.out.println(x);
-        });
+    UserData.printUserData(userData1,6,(x) -> {
+      System.out.println(x);
+    });
   }
 
-  public static void main(String[] args) {
+  public native void call(String userDataString);
+
+  public static void main(String[] args){
     Main x = new Main();
     x.printInRust();
     x.returnInteger();

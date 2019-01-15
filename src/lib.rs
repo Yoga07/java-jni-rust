@@ -61,19 +61,20 @@ pub extern "system" fn Java_com_sample_jni_UserData_printUserData(
     env: JNIEnv,
     _class: JClass,
     object_for_rust: JObject,
-    object_for_callback: JObject,
+    sleep_value: jint,
+    object_for_callbackAction: JObject,
 ) {
     let JVM = env.get_java_vm().unwrap();
 
     let RustObj = env.new_global_ref(object_for_rust).unwrap();
 
-    let CallbackObj = env.new_global_ref(object_for_callback).unwrap();
+    let CallbackObj = env.new_global_ref(object_for_callbackAction).unwrap();
 
     //THREAD 1 does Rust functions
     let handle = thread::spawn(move || {
         let rustobj = RustObj.as_obj();
         println!("[Rust]Rust is processing");
-        let sleep_time = time::Duration::from_secs(10);
+        let sleep_time = time::Duration::from_secs(5);
         thread::sleep(sleep_time);
         println!("[Rust]Rust finishes processing");
     });
@@ -82,15 +83,16 @@ pub extern "system" fn Java_com_sample_jni_UserData_printUserData(
     let handle1 = thread::spawn(move || {
         let env2 = JVM.attach_current_thread().unwrap();
         let callbackobj = CallbackObj.as_obj();
+        let f = sleep_value as u64;
+        println!("Rust->Calls back to Java");
         let z = env2
-            .new_string("Rust->Calls back to Java\n[Java]Java executes callbacks")
+            .new_string("[Java]Java executes callbacks")
             .expect("error creating java string");
-
         let q = JValue::Object(JObject::from(z));
-
         env2.call_method(callbackobj, "call", "(Ljava/lang/String;)V", &[q])
             .expect("error in calling method from java");
+        thread::sleep(time::Duration::from_secs(f));
+        println!("Java Responds");
     });
 
-    handle.join().unwrap();
 }
