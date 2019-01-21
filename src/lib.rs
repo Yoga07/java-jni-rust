@@ -6,17 +6,23 @@ use jni::JNIEnv;
 use std::{thread, time};
 
 #[no_mangle]
+#[allow(non_snake_case)]
+#[allow(unused_variables)]
 pub extern "system" fn Java_com_sample_jni_Library_printMsg(_env: JNIEnv, _class: JClass) {
     println!("[Rust]Hello World!");
 }
 
 #[no_mangle]
+#[allow(non_snake_case)]
+#[allow(unused_variables)]
 pub extern "system" fn Java_com_sample_jni_Library_returnInt(_env: JNIEnv, _class: JClass) -> jint {
     let o: jint = 8;
     o
 }
 
 #[no_mangle]
+#[allow(non_snake_case)]
+#[allow(unused_variables)]
 pub extern "system" fn Java_com_sample_jni_Library_returnString(
     _env: JNIEnv,
     _class: JClass,
@@ -26,6 +32,8 @@ pub extern "system" fn Java_com_sample_jni_Library_returnString(
 }
 
 #[no_mangle]
+#[allow(non_snake_case)]
+#[allow(unused_variables)]
 pub extern "system" fn Java_com_sample_jni_UserData_createUser(
     env: JNIEnv,
     _class: JClass,
@@ -70,11 +78,14 @@ pub extern "system" fn Java_com_sample_jni_UserData_printUserData(
 
     let CallbackObj = env.new_global_ref(object_for_callbackAction).unwrap();
 
+
+
     //THREAD 1 does Rust functions
     let handle = thread::spawn(move || {
         let rustobj = RustObj.as_obj();
         println!("[Rust]Rust is processing");
         let sleep_time = time::Duration::from_secs(5);
+        thread::park();
         thread::sleep(sleep_time);
         println!("[Rust]Rust finishes processing");
     });
@@ -83,7 +94,6 @@ pub extern "system" fn Java_com_sample_jni_UserData_printUserData(
     let handle1 = thread::spawn(move || {
         let env2 = JVM.attach_current_thread().unwrap();
         let callbackobj = CallbackObj.as_obj();
-        let f = sleep_value as u64;
         println!("Rust->Calls back to Java");
         let z = env2
             .new_string("[Java]Java executes callbacks")
@@ -91,8 +101,10 @@ pub extern "system" fn Java_com_sample_jni_UserData_printUserData(
         let q = JValue::Object(JObject::from(z));
         env2.call_method(callbackobj, "call", "(Ljava/lang/String;)V", &[q])
             .expect("error in calling method from java");
-        thread::sleep(time::Duration::from_secs(f));
+        handle.thread().unpark();
+        thread::sleep(time::Duration::from_secs(sleep_value as u64));
         println!("Java Responds");
     });
-
+    //Giving time for the worker threads to be spawned
+    thread::sleep(time::Duration::from_millis(10));
 }
